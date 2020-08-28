@@ -10,29 +10,29 @@ namespace Evolution.Models
         public bool Alive { get; set; } = true;
 
         public int Food { get; set; }
-        public int Healph { get; set; }
+        public int Health { get; set; }
 
         public Cell()
         {
             Food = 100;
-            Healph = 100;
+            Health = 100;
         }
 
         public async Task DoTick(int foodGotten)
         {
-            await CheckHeaph();
+            await CheckHealth();
             
             Food += foodGotten - 1;
 
             if (Food < 25)
             {
-                Healph--;
+                Health--;
             }
         }
 
-        private async Task CheckHeaph()
+        private async Task CheckHealth()
         {
-            if (Healph <= 0)
+            if (Health <= 0)
             {
                 await Die();
             }

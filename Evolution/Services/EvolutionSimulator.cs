@@ -21,6 +21,7 @@ namespace Evolution.Services
         private List<Cell> DeadCellList { get; set; }
         private Timer timer { get; set; }
         public World World { get; set; }
+        private int cellsAliveLastTick;
 
 
         public EvolutionSimulator()
@@ -56,9 +57,11 @@ namespace Evolution.Services
         {
             // Pre tick
             Tick++;
+            await PrintProgress();
+            cellsAliveLastTick = CellList.Count();
 
             if (Tick >= 10000
-                || Done)
+                || CellList.Count == 0)
             {
                 Stop();
             }
@@ -86,7 +89,7 @@ namespace Evolution.Services
                 {
                     if (World.FoodList.Count > 0)
                     {
-                        World.FoodList.RemoveAt(World.FoodList.Count());
+                        World.FoodList.RemoveAt(World.FoodList.Count()-1);
 
                         foodTaken = 1;
                     }
@@ -96,10 +99,18 @@ namespace Evolution.Services
 
 
                 //await item.DoTick(foodTaken);
-                await item.DoTick(0);
+                await item.DoTick(foodTaken);
             }
 
             // Post tick
+        }
+
+        private async Task PrintProgress()
+        {
+            if (cellsAliveLastTick != CellList.Count)
+            {
+                Console.WriteLine($"Tick: {Tick.ToString()} | {cellsAliveLastTick-CellList.Count} died");
+            }
         }
 
         private void Stop()
